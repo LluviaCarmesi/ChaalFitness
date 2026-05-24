@@ -35,9 +35,34 @@ class MainActivity : ComponentActivity() {
                     val savedHeight by settingsManager.heightFlow.collectAsState(initial = "")
                     val savedAge by settingsManager.ageFlow.collectAsState(initial = "")
 
+                    LaunchedEffect(savedCurrentWeight, savedHeight, savedAge) {
+                        if (
+                            savedCurrentWeight.isNotEmpty() &&
+                            savedHeight.isNotEmpty() &&
+                            savedAge.isNotEmpty()
+                        ) {
+                            currentScreen = ScreenDestination.MainScreen
+                        }
+                    }
                     when (currentScreen) {
                         ScreenDestination.MainScreen -> {
-
+                            MainScreen(
+                                chosenGoal = currentGoal.ifEmpty { "Build Muscle" }, // fallback value if launched via auto-login
+                                currentWeight = savedCurrentWeight,
+                                modifier = Modifier.padding(innerPadding),
+                                onLogoutClicked = {
+                                    // Reset preferences to allow re-entering stats
+                                    lifecycleScope.launch {
+                                        settingsManager.saveMetrics(
+                                            currentGoal = "",
+                                            currentWeight = "",
+                                            currentHeight = savedHeight,
+                                            currentAge = savedAge
+                                            )
+                                        currentScreen = ScreenDestination.GeneralInformationInput
+                                    }
+                                }
+                            )
                         }
 
                         ScreenDestination.GeneralInformationInput -> {
@@ -50,11 +75,10 @@ class MainActivity : ComponentActivity() {
                                 onBackClicked = {
                                     currentScreen = ScreenDestination.MainScreen
                                 },
-                                onFinishClicked = {
-                                    currentGoal,
-                                    currentWeight,
-                                    currentHeight,
-                                    currentAge ->
+                                onFinishClicked = { currentGoal,
+                                                    currentWeight,
+                                                    currentHeight,
+                                                    currentAge ->
                                     // LAUNCH A COROUTINE: Writing to disk MUST happen in a background thread
                                     lifecycleScope.launch {
                                         // We still save the target weight as empty or keep it if we want,
@@ -67,6 +91,7 @@ class MainActivity : ComponentActivity() {
                                             currentHeight = currentHeight,
                                             currentAge = currentAge
                                         )
+                                        currentScreen = ScreenDestination.MainScreen
                                     }
                                 }
                             )

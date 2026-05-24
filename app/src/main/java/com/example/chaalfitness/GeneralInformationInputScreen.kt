@@ -1,5 +1,6 @@
 package com.example.chaalfitness
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -50,7 +51,7 @@ fun GeneralInformationInputScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Welcome to WeightLiftr",
+            text = "Welcome to ChaalFitness",
             fontSize = 24.sp,
             style = MaterialTheme.typography.headlineMedium
         )
@@ -144,6 +145,7 @@ fun GeneralInformationInputScreen(
                         onClick = {
                             selectedGoal = goalOption
                             isMenuExpanded = false
+                            Log.d("Goal", selectedGoal)
                         }
                     )
                 }
@@ -153,7 +155,10 @@ fun GeneralInformationInputScreen(
         // Current Weight Input (Numeric Keyboard)
         OutlinedTextField(
             value = weight,
-            onValueChange = { weight = it },
+            onValueChange = { input ->
+                weight = input.filter { it.isDigit() }
+                Log.d("Weight", weight)
+            },
             label = { Text("Current Weight (lbs)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
@@ -166,14 +171,20 @@ fun GeneralInformationInputScreen(
         ) {
             OutlinedTextField(
                 value = heightFeet,
-                onValueChange = { heightFeet = it },
+                onValueChange = { input ->
+                    heightFeet = input.filter { it.isDigit() }
+                    Log.d("Feet", heightFeet)
+                },
                 label = { Text("Height (ft)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
             OutlinedTextField(
                 value = heightInches,
-                onValueChange = { heightInches = it },
+                onValueChange = { input ->
+                    heightInches = input.filter { it.isDigit() }
+                    Log.d("Inches", heightInches)
+                },
                 label = { Text("Height (in)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
@@ -183,7 +194,10 @@ fun GeneralInformationInputScreen(
         // Age Input
         OutlinedTextField(
             value = age,
-            onValueChange = { age = it },
+            onValueChange = { input ->
+                age = input.filter { it.isDigit() }
+                Log.d("Age", age)
+            },
             label = { Text("Age") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
@@ -218,7 +232,7 @@ fun GeneralInformationInputScreen(
                         onFinishClicked(selectedGoal, currentWeight, totalInches.toString(), age)
                     }
                 },
-                enabled = currentWeight.isNotBlank() && heightFeet.isNotBlank() && heightInches.isNotBlank() && age.isNotBlank(),
+                enabled = weight.isNotBlank() && heightFeet.isNotBlank() && heightInches.isNotBlank() && age.isNotBlank(),
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Finish")
