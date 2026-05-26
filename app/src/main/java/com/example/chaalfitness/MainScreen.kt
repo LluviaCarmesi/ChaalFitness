@@ -23,7 +23,7 @@ enum class DashboardTab {
 fun MainScreen(
     chosenGoal: String,
     currentWeight: String,
-    onLogoutClicked: () -> Unit,
+    onChangeInformationClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var activeTab by remember { mutableStateOf(DashboardTab.Main) }
@@ -69,7 +69,7 @@ fun MainScreen(
                     ProfileTabView(
                         goal = chosenGoal,
                         currentWeight = currentWeight,
-                        onLogoutClicked = onLogoutClicked
+                        onChangeInformationClicked = onChangeInformationClicked
                     )
                 }
             }
@@ -120,7 +120,7 @@ fun MainTabView() {
 fun ProfileTabView(
     goal: String,
     currentWeight: String,
-    onLogoutClicked: () -> Unit
+    onChangeInformationClicked: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -162,10 +162,10 @@ fun ProfileTabView(
         Spacer(modifier = Modifier.weight(1f))
 
         OutlinedButton(
-            onClick = onLogoutClicked,
+            onClick = onChangeInformationClicked,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Reset Profile Settings")
+            Text("Change Profile Settings")
         }
     }
 }
@@ -197,7 +197,7 @@ fun MainScreenPreview() {
         MainScreen(
             chosenGoal = "Build Muscle",
             currentWeight = "185",
-            onLogoutClicked = {}
+            onChangeInformationClicked = {}
         )
     }
 }

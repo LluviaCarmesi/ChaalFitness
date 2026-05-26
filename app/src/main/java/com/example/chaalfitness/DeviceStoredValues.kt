@@ -1,6 +1,7 @@
 package com.example.chaalfitness
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -16,8 +17,8 @@ class DeviceStoredValues(private val context: Context) {
 
     companion object {
         // 2. Define unique keys for our database rows
-        val CURRENT_GOAL_KEY = stringPreferencesKey("current_goal")
-        val CURRENT_WEIGHT_KEY = stringPreferencesKey("current_weight")
+        val CURRENT_GOAL_KEY = stringPreferencesKey("goal")
+        val CURRENT_WEIGHT_KEY = stringPreferencesKey("weight")
         val CURRENT_HEIGHT_KEY = stringPreferencesKey("height")
         val CURRENT_AGE_KEY = stringPreferencesKey("age") // TODO: Change to DOB
     }
@@ -40,6 +41,7 @@ class DeviceStoredValues(private val context: Context) {
 
     // 4. WRITE DATA: Suspend functions ensure file writing happens off the main UI thread
     suspend fun saveMetrics(currentGoal: String, currentWeight: String, currentHeight: String, currentAge: String) {
+        Log.d("weight", currentWeight)
         context.dataStore.edit { preferences ->
             preferences[CURRENT_GOAL_KEY] = currentGoal
             preferences[CURRENT_WEIGHT_KEY] = currentWeight

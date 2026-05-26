@@ -26,7 +26,9 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     var currentScreen by remember { mutableStateOf(ScreenDestination.GeneralInformationInput) }
-                    var currentGoal by remember { mutableStateOf("") }
+                    val savedCurrentGoal by settingsManager.currentGoalFlow.collectAsState(
+                        initial = ""
+                    )
 
                     // STREAM DATA FROM THE FILE: Automatically reads local storage
                     val savedCurrentWeight by settingsManager.currentWeightFlow.collectAsState(
@@ -47,20 +49,12 @@ class MainActivity : ComponentActivity() {
                     when (currentScreen) {
                         ScreenDestination.MainScreen -> {
                             MainScreen(
-                                chosenGoal = currentGoal.ifEmpty { "Build Muscle" }, // fallback value if launched via auto-login
+                                chosenGoal = savedCurrentGoal.ifEmpty { "Build Muscle" }, // fallback value if launched via auto-login
                                 currentWeight = savedCurrentWeight,
                                 modifier = Modifier.padding(innerPadding),
-                                onLogoutClicked = {
+                                onChangeInformationClicked = {
                                     // Reset preferences to allow re-entering stats
-                                    lifecycleScope.launch {
-                                        settingsManager.saveMetrics(
-                                            currentGoal = "",
-                                            currentWeight = "",
-                                            currentHeight = savedHeight,
-                                            currentAge = savedAge
-                                            )
-                                        currentScreen = ScreenDestination.GeneralInformationInput
-                                    }
+                                    currentScreen = ScreenDestination.GeneralInformationInput
                                 }
                             )
                         }
@@ -68,7 +62,7 @@ class MainActivity : ComponentActivity() {
                         ScreenDestination.GeneralInformationInput -> {
                             GeneralInformationInputScreen(
                                 modifier = Modifier.padding(innerPadding),
-                                currentGoal = currentGoal,
+                                currentGoal = savedCurrentGoal,
                                 currentWeight = savedCurrentWeight, // Pass saved data down!
                                 currentHeight = savedHeight,
                                 currentAge = savedAge,

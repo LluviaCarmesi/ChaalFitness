@@ -29,7 +29,7 @@ fun GeneralInformationInputScreen(
 ) {
     var weight by remember(currentWeight) { mutableStateOf(currentWeight) }
     var isMenuExpanded by remember { mutableStateOf(false) }
-    var selectedGoal by remember { mutableStateOf(currentGoal) }
+    var selectedGoal by remember(currentGoal) { mutableStateOf(currentGoal) }
     var displayedText by remember { mutableStateOf("") }
 
     // Logic to split initial height (total inches) into feet and inches
@@ -145,7 +145,6 @@ fun GeneralInformationInputScreen(
                         onClick = {
                             selectedGoal = goalOption
                             isMenuExpanded = false
-                            Log.d("Goal", selectedGoal)
                         }
                     )
                 }
@@ -157,7 +156,6 @@ fun GeneralInformationInputScreen(
             value = weight,
             onValueChange = { input ->
                 weight = input.filter { it.isDigit() }
-                Log.d("Weight", weight)
             },
             label = { Text("Current Weight (lbs)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -173,7 +171,6 @@ fun GeneralInformationInputScreen(
                 value = heightFeet,
                 onValueChange = { input ->
                     heightFeet = input.filter { it.isDigit() }
-                    Log.d("Feet", heightFeet)
                 },
                 label = { Text("Height (ft)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -183,7 +180,6 @@ fun GeneralInformationInputScreen(
                 value = heightInches,
                 onValueChange = { input ->
                     heightInches = input.filter { it.isDigit() }
-                    Log.d("Inches", heightInches)
                 },
                 label = { Text("Height (in)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -196,7 +192,6 @@ fun GeneralInformationInputScreen(
             value = age,
             onValueChange = { input ->
                 age = input.filter { it.isDigit() }
-                Log.d("Age", age)
             },
             label = { Text("Age") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -208,11 +203,13 @@ fun GeneralInformationInputScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedButton(
-                onClick = onBackClicked,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Back")
+            if (currentWeight.isNotEmpty()) {
+                OutlinedButton(
+                    onClick = onBackClicked,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text("Back")
+                }
             }
 
             Button(
@@ -228,8 +225,9 @@ fun GeneralInformationInputScreen(
                             ((heightFeet.toIntOrNull() ?: 0) * 12) + (heightInches.toIntOrNull()
                                 ?: 0)
                         summaryText =
-                            "Profile Updated! Starting at $currentWeight lbs. Height: $heightFeet' $heightInches\", Age: $age"
-                        onFinishClicked(selectedGoal, currentWeight, totalInches.toString(), age)
+                            "Profile Updated! Starting at $weight lbs. Height: $heightFeet' $heightInches\", Age: $age"
+                        Log.d("weight", weight)
+                        onFinishClicked(selectedGoal, weight, totalInches.toString(), age)
                     }
                 },
                 enabled = weight.isNotBlank() && heightFeet.isNotBlank() && heightInches.isNotBlank() && age.isNotBlank(),
@@ -262,7 +260,7 @@ fun GeneralInformationInputScreenPreview() {
             currentGoal = "Build Muscle",
             onBackClicked = {},
             onFinishClicked = { _, _, _, _ -> },
-            currentWeight = "23",
+            currentWeight = "",
             currentHeight = "70",
             currentAge = "25",
         )
